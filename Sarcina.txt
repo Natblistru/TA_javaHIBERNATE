@@ -1,0 +1,3 @@
+Atunci cand se apasa butonul de edit, daca este ceva selectat.
+Sa se afiseze un dialog aparte cu datele preincarcate.
+Cand se da save(), se editeaza datele in baza de date si in tabelul din fereastra principala.
