@@ -2,10 +2,12 @@ package edu.step.db;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Entity
 @Table(name = "employee") // acme - a company that makes everything
 public class Employee extends CoreEntity{
+
 
     @Column(nullable = false, length = 50)
     private String name;
@@ -104,5 +106,17 @@ public class Employee extends CoreEntity{
         this.birthdate = birthdate;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Employee employee = (Employee) o;
+        return Objects.equals(name, employee.name) && Objects.equals(surname, employee.surname) && Objects.equals(email, employee.email) && Objects.equals(birthdate, employee.birthdate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, surname, email, birthdate);
+    }
 
 }

@@ -1,7 +1,10 @@
 package edu.step.ui;
 
+import edu.step.db.Company;
 import edu.step.db.Department;
 import edu.step.db.Employee;
+import edu.step.db.hibernate.CompanyDao;
+import edu.step.db.hibernate.DepartmentDao;
 import edu.step.db.hibernate.EmployeeDao;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,9 +20,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 
 // TODO: implement views
 public class MainStageController implements Initializable {
@@ -38,6 +39,8 @@ public class MainStageController implements Initializable {
 
  //   private EmployeeDB employeeDB = new EmployeeDB();
     private EmployeeDao employeeDao = new EmployeeDao();
+    private DepartmentDao departmentDao = new DepartmentDao();
+    public CompanyDao companyDao = new CompanyDao();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -45,6 +48,7 @@ public class MainStageController implements Initializable {
         List<Employee> employees = employeeDao.findAll();
         ObservableList<Employee> observableArrayList = FXCollections.observableArrayList(employees);
         employeeTable.setItems(observableArrayList);
+        employeeTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         surnameColumn.setCellValueFactory(new PropertyValueFactory<>("surname"));
         emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
@@ -71,20 +75,27 @@ public class MainStageController implements Initializable {
     }
 
     public void onDelete() {
+        ObservableList<Integer> selectedIndices = employeeTable.getSelectionModel().getSelectedIndices();
+        List<Integer> idxCopy = new ArrayList<>(selectedIndices);
+        // sortam invers sa ne asiguram ca obiectul cu indexul cel mai mare e sters primul
+        idxCopy.sort(Comparator.reverseOrder());
+
+
         // citim care rand a fost selectat
         int index = employeeTable.getSelectionModel().getSelectedIndex();
         // afisam fereastra de confirmare
-        if(index != -1) {
+        if(!selectedIndices.isEmpty()){
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setHeaderText("Are you sure you want to delete the selected employee?");
-            Employee employee = employeeTable.getItems().get(index);
-            alert.setContentText(employee.getId() + " " + employee.getName() + " " + employee.getSurname());
+             alert.setContentText("You have selected " + selectedIndices.size() + " employee(s)");
             alert.setTitle("Please confirm");
             Optional<ButtonType> result = alert.showAndWait();
             if(result.isPresent()) {
                 if(result.get() == ButtonType.OK) {
-                    employeeDao.delete( employeeTable.getItems().get(index).getId());
-                    employeeTable.getItems().remove(index);
+                    for(int idx: idxCopy) {
+                        employeeDao.delete( employeeTable.getItems().get(idx).getId());
+                        employeeTable.getItems().remove(idx);
+                    }
                 }
             }
         }
@@ -150,5 +161,28 @@ public class MainStageController implements Initializable {
         addDialog.setTitle("List of companies");
         addDialog.initModality(Modality.APPLICATION_MODAL);
         addDialog.show();
+    }
+
+
+    public void onExport(ActionEvent event) {
+        try {
+            List<Company> companies = companyDao.findAll();
+            String filePath = "D:\\Documents\\JAVA\\write1.yaml";
+            companyDao.onExport(companies, filePath);
+
+        } catch (IOException e) {
+            System.err.println("A apărut o eroare la exportul datelor: " + e.getMessage());
+        }
+
+    }
+
+    public void onImport(ActionEvent event) {
+        try {
+            String filePath = "D:\\Documents\\JAVA\\write1.yaml";
+            companyDao.onImport(filePath,companyDao,departmentDao,employeeDao);
+            initialize(null,null);
+        } catch (IOException e) {
+            System.err.println("A apărut o eroare la exportul datelor: " + e.getMessage());
+        }
     }
 }

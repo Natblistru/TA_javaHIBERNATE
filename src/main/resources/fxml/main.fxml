@@ -43,7 +43,7 @@
       <Button layoutX="564.0" layoutY="41.0" mnemonicParsing="false" onAction="#onAdd" prefHeight="25.0" prefWidth="51.0" text="Add" />
       <Button layoutX="564.0" layoutY="74.0" mnemonicParsing="false" onAction="#onEdit" prefHeight="25.0" prefWidth="51.0" text="Edit" />
       <Button layoutX="564.0" layoutY="110.0" mnemonicParsing="false" onAction="#onDelete" text="Delete" />
-      <Button layoutX="564.0" layoutY="188.0" mnemonicParsing="false" text="Import" />
-      <Button layoutX="564.0" layoutY="224.0" mnemonicParsing="false" text="Export" />
+      <Button layoutX="564.0" layoutY="188.0" mnemonicParsing="false" onAction="#onImport" text="Import" />
+      <Button layoutX="564.0" layoutY="224.0" mnemonicParsing="false" onAction="#onExport" text="Export" />
    </children>
 </AnchorPane>
