@@ -33,6 +33,7 @@ public class MainStageController implements Initializable {
 
     public TableView<Employee> employeeTable; // TODO: stergere multipla
 
+    public TextField pathTextField;
     public MenuItem DepartmentsMenuItem;
 
     public MenuItem CompaniesMenuItem;
@@ -167,7 +168,8 @@ public class MainStageController implements Initializable {
     public void onExport(ActionEvent event) {
         try {
             List<Company> companies = companyDao.findAll();
-            String filePath = "D:\\Documents\\JAVA\\write1.yaml";
+  //          String filePath = "D:\\Documents\\JAVA\\write1.yaml";
+            String filePath = pathTextField.getText();
             companyDao.onExport(companies, filePath);
 
         } catch (IOException e) {
@@ -178,7 +180,8 @@ public class MainStageController implements Initializable {
 
     public void onImport(ActionEvent event) {
         try {
-            String filePath = "D:\\Documents\\JAVA\\write1.yaml";
+    //        String filePath = "D:\\Documents\\JAVA\\write1.yaml";
+            String filePath = pathTextField.getText();
             companyDao.onImport(filePath,companyDao,departmentDao,employeeDao);
             initialize(null,null);
         } catch (IOException e) {
